@@ -54,6 +54,28 @@ curl -H "Accept: text/event-stream" http://localhost:8080/v1/flights/{id}/stream
 ```
 
 
+## Example End-to-End Scenario
+
+### 1. Client calls: POST /v1/flights
+   → Flight "abc123" created, simulation starts
+
+### 2. Background thread generates metrics every ~1 sec (1 simulated minute):
+   - Minute 0: BOARDING, altitude=0, speed=0
+   - Minute 30: TAXI_OUT, climbing
+   - Minute 50: TAKEOFF_CLIMB, rapid altitude gain
+   - Minute 100: CRUISE, stable 35k ft
+   - Minute 250: DESCENT, losing altitude
+   - Minute 310: LANDING, on runway
+   - Minute 320: TAXI_IN, at gate ✓
+
+### 3. Client connects: GET /v1/flights/abc123/stream
+   → Receives SSE events in real-time as metrics are generated
+
+### 4. Client queries: GET /v1/flights/abc123/history
+   → Receives all 320+ metric records for analysis
+
+### 5. Flight completes after 320 simulated minutes (4-7 real seconds)
+   → Flight completes after 320 simulated minutes
 
 ## API Documentation
 
