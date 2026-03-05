@@ -29,7 +29,9 @@ public class GlobalExceptionHandler {
             ex.getMessage(),
             request.getDescription(false).replace("uri=", "")
         );
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                             .body(body);
     }
 
     /**
@@ -53,7 +55,9 @@ public class GlobalExceptionHandler {
         body.put("errors", errors);
         body.put("path", request.getDescription(false).replace("uri=", ""));
 
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                             .body(body);
     }
 
     /**
@@ -70,7 +74,9 @@ public class GlobalExceptionHandler {
             ex.getMessage(),
             request.getDescription(false).replace("uri=", "")
         );
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                             .body(body);
     }
 
     /**
