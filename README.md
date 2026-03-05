@@ -53,6 +53,8 @@ curl http://localhost:8080/flights/{id}/history
 curl -H "Accept: text/event-stream" http://localhost:8080/flights/{id}/stream
 ```
 
+
+
 ## API Documentation
 
 The application includes Swagger UI for interactive API documentation.

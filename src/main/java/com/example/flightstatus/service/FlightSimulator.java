@@ -15,7 +15,7 @@ import com.example.flightstatus.enums.FlightPhase;
 import com.example.flightstatus.enums.FlightStatus;
 import com.example.flightstatus.repository.FlightRepository;
 import com.example.flightstatus.repository.MetricRepository;
-import com.example.flightstatus.streaming.StreamingService;
+import com.example.flightstatus.service.StreamingService;
 
 @Service
 public class FlightSimulator {

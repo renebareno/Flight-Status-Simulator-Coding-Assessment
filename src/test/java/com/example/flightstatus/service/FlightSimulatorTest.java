@@ -14,7 +14,7 @@ import com.example.flightstatus.entity.Metric;
 import com.example.flightstatus.enums.FlightPhase;
 import com.example.flightstatus.repository.TestFlightRepository;
 import com.example.flightstatus.repository.TestMetricRepository;
-import com.example.flightstatus.streaming.StreamingService;
+import com.example.flightstatus.service.StreamingService;
 
 class FlightSimulatorTest {
 

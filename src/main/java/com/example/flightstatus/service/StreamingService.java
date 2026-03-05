@@ -1,4 +1,4 @@
-package com.example.flightstatus.streaming;
+package com.example.flightstatus.service;
 
 import java.io.IOException;
 import java.util.List;

@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/flights/233543e2-d424-4cd5-a32e-0555ba13e54b/stream
+  url: http://localhost:8080/flights/a25dde3f-ae21-4a37-94b1-ecd5bed49f87/stream
   headers:
     - name: Accept
       value: text/event-stream
