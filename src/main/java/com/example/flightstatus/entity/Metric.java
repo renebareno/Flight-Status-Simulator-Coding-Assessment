@@ -14,14 +14,31 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "metrics")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Metric {
+    
+    public Metric() {
+    }
+    
+    public Metric(String id, Flight flight, LocalDateTime timestamp, int simulatedMinute, FlightPhase phase,
+                  int altitude, int airspeed, int heading, Double latitude, Double longitude,
+                  int fuelPercentage, Double outsideAirTemperature, int etaMinutes) {
+        this.id = id;
+        this.flight = flight;
+        this.timestamp = timestamp;
+        this.simulatedMinute = simulatedMinute;
+        this.phase = phase;
+        this.altitude = altitude;
+        this.airspeed = airspeed;
+        this.heading = heading;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.fuelPercentage = fuelPercentage;
+        this.outsideAirTemperature = outsideAirTemperature;
+        this.etaMinutes = etaMinutes;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

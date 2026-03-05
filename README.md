@@ -80,4 +80,3 @@ Used UUID for IDs to avoid collisions.
 Scheduled task runs every real second to update active flights.
 
 Stored simulatedMinute to easily detect duplicates and compute ETA.
-

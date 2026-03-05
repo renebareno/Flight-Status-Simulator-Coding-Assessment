@@ -1,11 +1,6 @@
 package com.example.flightstatus.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,10 +10,17 @@ import com.example.flightstatus.enums.*;
 
 @Entity
 @Table(name = "flights")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Flight {
+    
+    public Flight() {
+    }
+    
+    public Flight(String id, LocalDateTime startTime, FlightStatus status, List<Metric> metrics) {
+        this.id = id;
+        this.startTime = startTime;
+        this.status = status;
+        this.metrics = metrics;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
