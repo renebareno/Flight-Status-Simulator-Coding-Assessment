@@ -56,9 +56,9 @@ public class FlightSimulator {
 
     /**
      * Update simulation for all active flights.
-     * Called periodically (every second) to check if new metrics should be generated.
+     * Called periodically to check if new metrics should be generated.
      */
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelayString = "${simulation.updateIntervalMillis}")
     @Transactional
     public void updateActiveFlights() {
         var activeFlights = flightRepository.findByStatus(FlightStatus.ACTIVE);
@@ -140,129 +140,81 @@ public class FlightSimulator {
      * Determine current phase and interpolate realistic values for the given minute.
      */
     private FlightPhaseData determinePhaseAndInterpolate(int simulatedMinute) {
-        FlightPhaseData data = new FlightPhaseData();
         int cumulativeMinutes = 0;
-        FlightPhase[] phases = FlightPhase.values();
         FlightPhase currentPhase = null;
         int phaseStartMinute = 0;
-        int phaseEndMinute = 0;
+        int phaseDuration = 0;
 
         // Find which phase we're in
-        for (FlightPhase phase : phases) {
-            int phaseDuration = phase.getDurationMinutes();
-            phaseEndMinute = cumulativeMinutes + phaseDuration;
-
-            if (simulatedMinute < phaseEndMinute) {
+        for (FlightPhase phase : FlightPhase.values()) {
+            phaseDuration = phase.getDurationMinutes();
+            if (simulatedMinute < cumulativeMinutes + phaseDuration) {
                 currentPhase = phase;
                 phaseStartMinute = cumulativeMinutes;
                 break;
             }
-            cumulativeMinutes = phaseEndMinute;
+            cumulativeMinutes += phaseDuration;
         }
 
         if (currentPhase == null) {
-            currentPhase = phases[phases.length - 1];
+            currentPhase = FlightPhase.values()[FlightPhase.values().length - 1];
             phaseStartMinute = cumulativeMinutes;
-            phaseEndMinute = cumulativeMinutes + currentPhase.getDurationMinutes();
+            phaseDuration = currentPhase.getDurationMinutes();
         }
 
-        data.phase = currentPhase;
         int minuteInPhase = simulatedMinute - phaseStartMinute;
-        int phaseDuration = currentPhase.getDurationMinutes();
 
-        // Populate phase-specific values
-        switch (currentPhase) {
-            case BOARDING:
-                data.altitude = 0;
-                data.airspeed = 0;
-                data.heading = 270; // facing west (runway direction, simplified)
-                data.latitude = LAX_LATITUDE;
-                data.longitude = LAX_LONGITUDE;
-                data.fuelPercentage = 100;
-                data.temperature = 20.0;
-                break;
-
-            case TAXI_OUT:
-                data.altitude = 0;
-                data.airspeed = 15;
-                data.heading = 270;
-                data.latitude = LAX_LATITUDE;
-                data.longitude = LAX_LONGITUDE;
-                data.fuelPercentage = 99;
-                data.temperature = 20.0;
-                break;
-
-            case TAKEOFF_CLIMB:
-                double climbProgress = (double) minuteInPhase / phaseDuration;
-                data.altitude = (int) (35000 * climbProgress); // climb to 35,000 ft
-                data.airspeed = (int) (450 * climbProgress);   // accelerate to 450 knots
-                data.heading = 90; // heading east after takeoff
-                // Interpolate position from LAX towards JFK
-                data.latitude = LAX_LATITUDE + (JFK_LATITUDE - LAX_LATITUDE) * climbProgress * 0.1;
-                data.longitude = LAX_LONGITUDE + (JFK_LONGITUDE - LAX_LONGITUDE) * climbProgress * 0.1;
-                data.fuelPercentage = (int) (100 - 5 * climbProgress);
-                data.temperature = 20.0 - 6.5 * climbProgress;
-                break;
-
-            case CRUISE:
-                double cruiseProgress = (double) minuteInPhase / phaseDuration;
-                data.altitude = 35000;
-                data.airspeed = 450;
-                data.heading = 90;
-                // Cruise across country
-                data.latitude = LAX_LATITUDE + (JFK_LATITUDE - LAX_LATITUDE) * (0.1 + cruiseProgress * 0.8);
-                data.longitude = LAX_LONGITUDE + (JFK_LONGITUDE - LAX_LONGITUDE) * (0.1 + cruiseProgress * 0.8);
-                data.fuelPercentage = (int) (95 - 80 * cruiseProgress); // fuel decreases from 95% to ~15%
-                data.temperature = -55.0;
-                break;
-
-            case DESCENT:
-                double descentProgress = (double) minuteInPhase / phaseDuration;
-                data.altitude = (int) (35000 * (1 - descentProgress));
-                data.airspeed = (int) (450 * (1 - descentProgress * 0.8));
-                data.heading = 90;
-                // Continue towards JFK
-                data.latitude = LAX_LATITUDE + (JFK_LATITUDE - LAX_LATITUDE) * (0.9 + descentProgress * 0.05);
-                data.longitude = LAX_LONGITUDE + (JFK_LONGITUDE - LAX_LONGITUDE) * (0.9 + descentProgress * 0.05);
-                data.fuelPercentage = (int) (15 - 10 * descentProgress);
-                data.temperature = -55.0 + 6.5 * descentProgress;
-                break;
-
-            case LANDING:
-                data.altitude = 0;
-                data.airspeed = 140;
-                data.heading = 90;
-                data.latitude = JFK_LATITUDE;
-                data.longitude = JFK_LONGITUDE;
-                data.fuelPercentage = 5;
-                data.temperature = 15.0;
-                break;
-
-            case TAXI_IN:
-                data.altitude = 0;
-                data.airspeed = 10;
-                data.heading = 90;
-                data.latitude = JFK_LATITUDE;
-                data.longitude = JFK_LONGITUDE;
-                data.fuelPercentage = 5;
-                data.temperature = 15.0;
-                break;
-        }
-
-        return data;
+        // Delegate to phase-specific method
+        return switch (currentPhase) {
+            case BOARDING -> new FlightPhaseData(FlightPhase.BOARDING, 0, 0, 270, LAX_LATITUDE, LAX_LONGITUDE, 100, 20.0);
+            case TAXI_OUT -> new FlightPhaseData(FlightPhase.TAXI_OUT, 0, 15, 270, LAX_LATITUDE, LAX_LONGITUDE, 99, 20.0);
+            case LANDING  -> new FlightPhaseData(FlightPhase.LANDING, 0, 140, 90, JFK_LATITUDE, JFK_LONGITUDE, 5, 15.0);
+            case TAXI_IN  -> new FlightPhaseData(FlightPhase.TAXI_IN, 0, 10, 90, JFK_LATITUDE, JFK_LONGITUDE, 5, 15.0);
+            case TAKEOFF_CLIMB -> {
+                double progress = (double) minuteInPhase / phaseDuration;
+                yield new FlightPhaseData(
+                    FlightPhase.TAKEOFF_CLIMB,
+                    (int) (35000 * progress),
+                    (int) (450 * progress),
+                    90,
+                    LAX_LATITUDE + (JFK_LATITUDE - LAX_LATITUDE) * progress * 0.1,
+                    LAX_LONGITUDE + (JFK_LONGITUDE - LAX_LONGITUDE) * progress * 0.1,
+                    (int) (100 - 5 * progress),
+                    20.0 - 6.5 * progress
+                );
+            }
+            case CRUISE -> {
+                double progress = (double) minuteInPhase / phaseDuration;
+                yield new FlightPhaseData(
+                    FlightPhase.CRUISE,
+                    35000,
+                    450,
+                    90,
+                    LAX_LATITUDE + (JFK_LATITUDE - LAX_LATITUDE) * (0.1 + progress * 0.8),
+                    LAX_LONGITUDE + (JFK_LONGITUDE - LAX_LONGITUDE) * (0.1 + progress * 0.8),
+                    (int) (95 - 80 * progress),
+                    -55.0
+                );
+            }
+            case DESCENT -> {
+                double progress = (double) minuteInPhase / phaseDuration;
+                yield new FlightPhaseData(
+                    FlightPhase.DESCENT,
+                    (int) (35000 * (1 - progress)),
+                    (int) (450 * (1 - progress * 0.8)),
+                    90,
+                    LAX_LATITUDE + (JFK_LATITUDE - LAX_LATITUDE) * (0.9 + progress * 0.05),
+                    LAX_LONGITUDE + (JFK_LONGITUDE - LAX_LONGITUDE) * (0.9 + progress * 0.05),
+                    (int) (15 - 10 * progress),
+                    -55.0 + 6.5 * progress
+                );
+            }
+        };
     }
 
     /**
-     * Helper class to hold phase-specific data.
+     * Helper record to hold phase-specific data.
      */
-    private static class FlightPhaseData {
-        FlightPhase phase;
-        int altitude;
-        int airspeed;
-        int heading;
-        double latitude;
-        double longitude;
-        int fuelPercentage;
-        double temperature;
-    }
+    private record FlightPhaseData(FlightPhase phase, int altitude, int airspeed, int heading,
+                                   double latitude, double longitude, int fuelPercentage, double temperature) {}
 }

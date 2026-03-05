@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "metrics")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Metric {
@@ -149,5 +148,23 @@ public class Metric {
 
     public void setEtaMinutes(int etaMinutes) {
         this.etaMinutes = etaMinutes;
+    }
+
+    @Override
+    public String toString() {
+        return "Metric{" +
+                "id='" + id + '\'' +
+                ", timestamp=" + timestamp +
+                ", simulatedMinute=" + simulatedMinute +
+                ", phase=" + phase +
+                ", altitude=" + altitude +
+                ", airspeed=" + airspeed +
+                ", heading=" + heading +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", fuelPercentage=" + fuelPercentage +
+                ", outsideAirTemperature=" + outsideAirTemperature +
+                ", etaMinutes=" + etaMinutes +
+                '}';
     }
 }

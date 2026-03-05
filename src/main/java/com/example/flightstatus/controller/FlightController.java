@@ -33,10 +33,10 @@ public class FlightController {
     private final FlightRepository flightRepository;
     private final MetricRepository metricRepository;
     private final ModelMapper modelMapper;
-    private static final Logger logger = LoggerFactory.getLogger(FlightController.class);    
+    private static final Logger logger = LoggerFactory.getLogger(FlightController.class);
 
     public FlightController(FlightSimulator flightSimulator, FlightRepository flightRepository,
-                            MetricRepository metricRepository, ModelMapper modelMapper) {
+            MetricRepository metricRepository, ModelMapper modelMapper) {
         this.flightSimulator = flightSimulator;
         this.flightRepository = flightRepository;
         this.metricRepository = metricRepository;
@@ -50,14 +50,14 @@ public class FlightController {
     @PostMapping
     public ResponseEntity<FlightSummary> startFlight() {
         Flight flight = flightSimulator.startFlight();
-        logger.info("flight: {}", flight.toString());      
+        logger.info("flight: {}", flight.toString());
         FlightSummary summary = modelMapper.map(flight, FlightSummary.class);
         URI location = ServletUriComponentsBuilder
-            .fromCurrentRequest()
-            .path("/{id}")
-            .buildAndExpand(flight.getId())
-            .toUri();
-        logger.info("Summary: {}", summary.toString());      
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(flight.getId())
+                .toUri();
+        logger.info("Summary: {}", summary.toString());
         return ResponseEntity.created(location).body(summary);
     }
 
@@ -68,8 +68,8 @@ public class FlightController {
     public ResponseEntity<List<FlightSummary>> getAllFlights() {
         List<Flight> flights = flightRepository.findAll();
         List<FlightSummary> summaries = flights.stream()
-            .map(flight -> modelMapper.map(flight, FlightSummary.class))
-            .toList();
+                .map(flight -> modelMapper.map(flight, FlightSummary.class))
+                .toList();
         return ResponseEntity.ok(summaries);
     }
 
@@ -79,19 +79,21 @@ public class FlightController {
     @GetMapping("/{id}")
     public ResponseEntity<FlightDetail> getFlightDetail(@PathVariable String id) {
         Flight flight = flightRepository.findById(id)
-            .orElseThrow(() -> new FlightNotFoundException("Flight not found with id: " + id));
+                .orElseThrow(() -> new FlightNotFoundException("Flight not found with id: " + id));
 
         Metric latestMetric = metricRepository.findFirstByFlightOrderBySimulatedMinuteDesc(flight);
+        logger.info("latestMetric: {}", latestMetric.toString());
+
         MetricResponse metricResponse = latestMetric != null
-            ? modelMapper.map(latestMetric, MetricResponse.class)
-            : null;
+                ? modelMapper.map(latestMetric, MetricResponse.class)
+                : null;
+        logger.info("latestMetricResponse: {}", metricResponse != null ? metricResponse.toString() : "null");                
 
         FlightDetail detail = new FlightDetail(
-            flight.getId(),
-            flight.getStatus(),
-            flight.getStartTime(),
-            metricResponse
-        );
+                flight.getId(),
+                flight.getStatus(),
+                flight.getStartTime(),
+                metricResponse);
 
         return ResponseEntity.ok(detail);
     }
@@ -102,12 +104,12 @@ public class FlightController {
     @GetMapping("/{id}/history")
     public ResponseEntity<List<MetricResponse>> getFlightHistory(@PathVariable String id) {
         Flight flight = flightRepository.findById(id)
-            .orElseThrow(() -> new FlightNotFoundException("Flight not found with id: " + id));
+                .orElseThrow(() -> new FlightNotFoundException("Flight not found with id: " + id));
 
         List<Metric> metrics = metricRepository.findByFlightOrderBySimulatedMinute(flight);
         List<MetricResponse> responses = metrics.stream()
-            .map(metric -> modelMapper.map(metric, MetricResponse.class))
-            .toList();
+                .map(metric -> modelMapper.map(metric, MetricResponse.class))
+                .toList();
 
         return ResponseEntity.ok(responses);
     }
