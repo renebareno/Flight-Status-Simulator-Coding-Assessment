@@ -50,6 +50,14 @@ curl http://localhost:8080/flights/{id}
 curl http://localhost:8080/flights/{id}/history
 ```
 
+## API Documentation
+
+The application includes Swagger UI for interactive API documentation.
+
+Access the Swagger UI at: http://localhost:8080/swagger-ui/index.html
+
+Or view the OpenAPI specification at: http://localhost:8080/v3/api-docs
+
 ## Assumptions:
 
 Acceleration factor = 60 (1 real sec = 1 simulated minute)

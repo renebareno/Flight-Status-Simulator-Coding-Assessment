@@ -25,8 +25,14 @@ import com.example.flightstatus.service.FlightSimulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/flights")
+@Tag(name = "Flight Management", description = "APIs for managing flight simulations")
 public class FlightController {
 
     private final FlightSimulator flightSimulator;
@@ -48,6 +54,11 @@ public class FlightController {
      * Returns 201 Created with location header
      */
     @PostMapping
+    @Operation(summary = "Start a new flight simulation", description = "Creates and starts a new flight simulation with real-time metrics generation")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Flight created successfully"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     public ResponseEntity<FlightSummary> startFlight() {
         Flight flight = flightSimulator.startFlight();
         logger.info("flight: {}", flight.toString());
@@ -65,6 +76,10 @@ public class FlightController {
      * GET /flights - List all flights
      */
     @GetMapping
+    @Operation(summary = "Get all flights", description = "Retrieves a list of all flight simulations")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "List of flights retrieved successfully")
+    })
     public ResponseEntity<List<FlightSummary>> getAllFlights() {
         List<Flight> flights = flightRepository.findAll();
         List<FlightSummary> summaries = flights.stream()
@@ -77,6 +92,11 @@ public class FlightController {
      * GET /flights/{id} - Get flight with latest metric
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Get flight details", description = "Retrieves detailed information about a specific flight including its latest metric")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Flight details retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Flight not found")
+    })
     public ResponseEntity<FlightDetail> getFlightDetail(@PathVariable String id) {
         Flight flight = flightRepository.findById(id)
                 .orElseThrow(() -> new FlightNotFoundException("Flight not found with id: " + id));
@@ -102,6 +122,11 @@ public class FlightController {
      * GET /flights/{id}/history - Get all metrics for a flight
      */
     @GetMapping("/{id}/history")
+    @Operation(summary = "Get flight history", description = "Retrieves all metrics for a specific flight in chronological order")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Flight history retrieved successfully"),
+        @ApiResponse(responseCode = "404", description = "Flight not found")
+    })
     public ResponseEntity<List<MetricResponse>> getFlightHistory(@PathVariable String id) {
         Flight flight = flightRepository.findById(id)
                 .orElseThrow(() -> new FlightNotFoundException("Flight not found with id: " + id));
