@@ -1,13 +1,10 @@
 package com.example.flightstatus.dto;
 
 
-import lombok.Data;
-
 import java.time.LocalDateTime;
 
 import com.example.flightstatus.enums.FlightStatus;
 
-@Data
 public class FlightSummary {
     private String id;
     private FlightStatus status;
@@ -32,5 +29,26 @@ public class FlightSummary {
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setStatus(FlightStatus status) {
+        this.status = status;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    @Override
+    public String toString() {
+        return "FlightSummary{" +
+                "id='" + id + '\'' +
+                ", status=" + status +
+                ", startTime=" + startTime +
+                '}';
     }
 }

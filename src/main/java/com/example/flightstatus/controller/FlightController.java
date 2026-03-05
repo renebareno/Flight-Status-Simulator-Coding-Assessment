@@ -22,6 +22,9 @@ import com.example.flightstatus.repository.FlightRepository;
 import com.example.flightstatus.repository.MetricRepository;
 import com.example.flightstatus.service.FlightSimulator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 @RequestMapping("/flights")
 public class FlightController {
@@ -30,6 +33,7 @@ public class FlightController {
     private final FlightRepository flightRepository;
     private final MetricRepository metricRepository;
     private final ModelMapper modelMapper;
+    private static final Logger logger = LoggerFactory.getLogger(FlightController.class);    
 
     public FlightController(FlightSimulator flightSimulator, FlightRepository flightRepository,
                             MetricRepository metricRepository, ModelMapper modelMapper) {
@@ -46,14 +50,14 @@ public class FlightController {
     @PostMapping
     public ResponseEntity<FlightSummary> startFlight() {
         Flight flight = flightSimulator.startFlight();
+        logger.info("flight: {}", flight.toString());      
         FlightSummary summary = modelMapper.map(flight, FlightSummary.class);
-
         URI location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
             .buildAndExpand(flight.getId())
             .toUri();
-
+        logger.info("Summary: {}", summary.toString());      
         return ResponseEntity.created(location).body(summary);
     }
 

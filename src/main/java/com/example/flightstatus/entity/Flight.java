@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import com.example.flightstatus.enums.*;
 
 @Entity
 @Table(name = "flights")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -66,5 +66,13 @@ public class Flight {
         this.metrics = metrics;
     }
 
+    @Override
+    public String toString() {
+        return "Flight{" +
+                "id='" + id + '\'' +
+                ", startTime=" + startTime +
+                ", status=" + status +
+                '}';
+    }
 
 }
