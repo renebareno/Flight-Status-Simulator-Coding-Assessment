@@ -49,3 +49,24 @@ curl http://localhost:8080/flights/{id}
 # Get metric history
 curl http://localhost:8080/flights/{id}/history
 ```
+
+## Assumptions:
+
+Acceleration factor = 60 (1 real sec = 1 simulated minute)
+
+Metrics generated every simulated minute
+
+Phase durations as given
+
+LAX coordinates: (33.9416° N, 118.4085° W); JFK: (40.6413° N, 73.7781° W)
+
+Temperature, fuel, etc. are simplified linear approximations.
+
+### Design Decisions:
+
+Used UUID for IDs to avoid collisions.
+
+Scheduled task runs every real second to update active flights.
+
+Stored simulatedMinute to easily detect duplicates and compute ETA.
+
