@@ -1,6 +1,6 @@
 # Flight Status Simulator
 
-Spring Boot application to simulate flight status and metrics.
+Spring Boot application to simulate flight status and metrics, that simulates a commercial flight from LAX to JFK, exposing real-time flight metrics via a REST API.
 
 ## Prerequisites
 
