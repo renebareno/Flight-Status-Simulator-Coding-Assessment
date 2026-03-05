@@ -48,6 +48,9 @@ curl http://localhost:8080/flights/{id}
 
 # Get metric history
 curl http://localhost:8080/flights/{id}/history
+
+# Socket - Stream real-time metrics (SSE) (Pick a fresh id !! )
+curl -H "Accept: text/event-stream" http://localhost:8080/flights/{id}/stream
 ```
 
 ## API Documentation

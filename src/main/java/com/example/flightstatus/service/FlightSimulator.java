@@ -15,6 +15,7 @@ import com.example.flightstatus.enums.FlightPhase;
 import com.example.flightstatus.enums.FlightStatus;
 import com.example.flightstatus.repository.FlightRepository;
 import com.example.flightstatus.repository.MetricRepository;
+import com.example.flightstatus.streaming.StreamingService;
 
 @Service
 public class FlightSimulator {
@@ -23,6 +24,7 @@ public class FlightSimulator {
     private final SimulationProperties properties;
     private final FlightRepository flightRepository;
     private final MetricRepository metricRepository;
+    private final StreamingService streamingService;
 
     // Hardcoded LAX and JFK coordinates for simplicity
     private static final double LAX_LATITUDE = 33.9425;
@@ -31,10 +33,11 @@ public class FlightSimulator {
     private static final double JFK_LONGITUDE = -73.7781;
 
     public FlightSimulator(SimulationProperties properties, FlightRepository flightRepository,
-                          MetricRepository metricRepository) {
+                          MetricRepository metricRepository, StreamingService streamingService) {
         this.properties = properties;
         this.flightRepository = flightRepository;
         this.metricRepository = metricRepository;
+        this.streamingService = streamingService;
     }
 
     /**
@@ -49,6 +52,7 @@ public class FlightSimulator {
         // Generate initial metric at minute 0
         Metric initialMetric = generateMetricForMinute(flight, 0);
         metricRepository.save(initialMetric);
+        streamingService.pushMetric(flight.getId(), initialMetric);
 
         logger.info("Flight started with ID: {}", flight.getId());
         return flight;
@@ -86,6 +90,7 @@ public class FlightSimulator {
                 if (lastMetric == null || lastMetric.getSimulatedMinute() < totalDuration - 1) {
                     Metric finalMetric = generateMetricForMinute(flight, totalDuration - 1);
                     metricRepository.save(finalMetric);
+                    streamingService.pushMetric(flight.getId(), finalMetric);
                 }
                 logger.info("Flight {} completed", flight.getId());
             }
@@ -97,6 +102,7 @@ public class FlightSimulator {
             if (elapsedMinutes > lastRecordedMinute) {
                 Metric newMetric = generateMetricForMinute(flight, elapsedMinutes);
                 metricRepository.save(newMetric);
+                streamingService.pushMetric(flight.getId(), newMetric);
             }
         }
     }

@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import com.example.flightstatus.SimulationProperties;
 import com.example.flightstatus.entity.Flight;
@@ -14,13 +16,19 @@ import com.example.flightstatus.entity.Metric;
 import com.example.flightstatus.enums.FlightPhase;
 import com.example.flightstatus.repository.TestFlightRepository;
 import com.example.flightstatus.repository.TestMetricRepository;
+import com.example.flightstatus.streaming.StreamingService;
 
 class FlightSimulatorTest {
 
     private FlightSimulator simulator;
 
+    @Mock
+    private StreamingService streamingService;
+
     @BeforeEach
     void setup() {
+        MockitoAnnotations.openMocks(this);
+
         // Create test properties with fast simulation
         SimulationProperties props = new SimulationProperties();
         props.setAccelerationFactor(1);
@@ -30,7 +38,7 @@ class FlightSimulatorTest {
         TestFlightRepository flightRepo = new TestFlightRepository();
         TestMetricRepository metricRepo = new TestMetricRepository();
 
-        simulator = new FlightSimulator(props, flightRepo, metricRepo);
+        simulator = new FlightSimulator(props, flightRepo, metricRepo, streamingService);
     }
 
     @Test

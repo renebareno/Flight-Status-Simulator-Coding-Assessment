@@ -3,6 +3,7 @@ package com.example.flightstatus.entity;
 import java.time.LocalDateTime;
 
 import com.example.flightstatus.enums.FlightPhase;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,7 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -28,6 +28,7 @@ public class Metric {
 
     @ManyToOne
     @JoinColumn(name = "flight_id")
+    @JsonIgnore
     private Flight flight;
 
     private LocalDateTime timestamp;           // real system time when metric was recorded
