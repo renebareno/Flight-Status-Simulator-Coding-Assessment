@@ -1,0 +1,153 @@
+package com.example.flightstatus.entity;
+
+import java.time.LocalDateTime;
+
+import com.example.flightstatus.enums.FlightPhase;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "metrics")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Metric {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    @ManyToOne
+    @JoinColumn(name = "flight_id")
+    private Flight flight;
+
+    private LocalDateTime timestamp;           // real system time when metric was recorded
+    private int simulatedMinute;                // elapsed minutes since start (0..total-1)
+
+    @Enumerated(EnumType.STRING)
+    private FlightPhase phase;
+
+    private int altitude;                        // feet
+    private int airspeed;                         // knots
+    private int heading;                           // degrees (0-359)
+    private Double latitude;
+    private Double longitude;
+    private int fuelPercentage;                    // 0-100
+    private Double outsideAirTemperature;           // Celsius (or Fahrenheit, choose one)
+    private int etaMinutes;                          // estimated minutes to arrival
+
+    // Explicit getters and setters for Lombok compatibility issues
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getSimulatedMinute() {
+        return simulatedMinute;
+    }
+
+    public void setSimulatedMinute(int simulatedMinute) {
+        this.simulatedMinute = simulatedMinute;
+    }
+
+    public FlightPhase getPhase() {
+        return phase;
+    }
+
+    public void setPhase(FlightPhase phase) {
+        this.phase = phase;
+    }
+
+    public int getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(int altitude) {
+        this.altitude = altitude;
+    }
+
+    public int getAirspeed() {
+        return airspeed;
+    }
+
+    public void setAirspeed(int airspeed) {
+        this.airspeed = airspeed;
+    }
+
+    public int getHeading() {
+        return heading;
+    }
+
+    public void setHeading(int heading) {
+        this.heading = heading;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public int getFuelPercentage() {
+        return fuelPercentage;
+    }
+
+    public void setFuelPercentage(int fuelPercentage) {
+        this.fuelPercentage = fuelPercentage;
+    }
+
+    public Double getOutsideAirTemperature() {
+        return outsideAirTemperature;
+    }
+
+    public void setOutsideAirTemperature(Double outsideAirTemperature) {
+        this.outsideAirTemperature = outsideAirTemperature;
+    }
+
+    public int getEtaMinutes() {
+        return etaMinutes;
+    }
+
+    public void setEtaMinutes(int etaMinutes) {
+        this.etaMinutes = etaMinutes;
+    }
+}

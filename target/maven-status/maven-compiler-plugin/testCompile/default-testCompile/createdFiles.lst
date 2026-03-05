@@ -1,0 +1,4 @@
+com\example\flightstatus\repository\TestMetricRepository.class
+com\example\flightstatus\repository\TestFlightRepository.class
+com\example\flightstatus\controller\FlightControllerIntegrationTest.class
+com\example\flightstatus\service\FlightSimulatorTest.class
