@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/flights")
+@RequestMapping("/v1/flights")
 @Tag(name = "Flight Management", description = "APIs for managing flight simulations")
 public class FlightController {
 

@@ -38,19 +38,19 @@ Use the following curl examples to interact with the service:
 
 ```bash
 # Start flight
-curl -X POST http://localhost:8080/flights
+curl -X POST http://localhost:8080/v1/flights
 
 # List flights
-curl http://localhost:8080/flights
+curl http://localhost:8080/v1/flights
 
 # Get flight status
-curl http://localhost:8080/flights/{id}
+curl http://localhost:8080/v1/flights/{id}
 
 # Get metric history
-curl http://localhost:8080/flights/{id}/history
+curl http://localhost:8080/v1/flights/{id}/history
 
 # Socket - Stream real-time metrics (SSE) (Pick a fresh id !! )
-curl -H "Accept: text/event-stream" http://localhost:8080/flights/{id}/stream
+curl -H "Accept: text/event-stream" http://localhost:8080/v1/flights/{id}/stream
 ```
 
 

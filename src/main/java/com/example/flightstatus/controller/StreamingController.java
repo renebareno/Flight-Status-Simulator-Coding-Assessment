@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/flights")
+@RequestMapping("/v1/flights")
 @Tag(name = "Flight Streaming", description = "Real-time flight metrics streaming APIs")
 public class StreamingController {
 

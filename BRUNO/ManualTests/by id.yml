@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/flights/370c7222-6981-4f47-ac9c-836ae6c71f19
+  url: http://localhost:8080/v1/flights/a6f5a1d0-6cf5-409f-8504-34675478175d
   auth: inherit
 
 settings:
